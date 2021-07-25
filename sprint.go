@@ -132,3 +132,22 @@ func (s *SprintService) GetIssueWithContext(ctx context.Context, issueID string,
 func (s *SprintService) GetIssue(issueID string, options *GetQueryOptions) (*Issue, *Response, error) {
 	return s.GetIssueWithContext(context.Background(), issueID, options)
 }
+
+// GetSprintWithContext returns a sprint with a sprint ID
+func (s *SprintService) GetSprintWithContext(ctx context.Context, sprintID int) (*Sprint, *Response, error) {
+	apiEndpoint := fmt.Sprintf("rest/agile/1.0/sprint/%d", sprintID)
+
+	req, err := s.client.NewRequestWithContext(ctx, "GET", apiEndpoint, nil)
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	result := new(Sprint)
+	resp, err := s.client.Do(req, result)
+	if err != nil {
+		err = NewJiraError(resp, err)
+	}
+
+	return result, resp, err
+}
